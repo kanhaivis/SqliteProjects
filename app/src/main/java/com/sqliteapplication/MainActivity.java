@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Bundle mBundle;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBundle.putInt("pos",0);
         mBundle.putInt("SubPos",0);
         SowStudntInfo(mBundle);
+
     }
 
     private void SowStudntInfo(Bundle mBundle) {

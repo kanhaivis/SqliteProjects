@@ -35,7 +35,7 @@ import java.util.List;
  * Created by krishan on 19/7/17.
  */
 
-public class StudentInfoFragment extends Fragment {
+public class StudentInfoFragment extends Fragment implements StudentAdapter.AlertBtnUpdate {
 
     private RecyclerView mRecyclerView;
     private StudentAdapter mAdapter;
@@ -96,8 +96,14 @@ public class StudentInfoFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new StudentAdapter(getContext(),mList);
+        mAdapter.setUpdateAlert(this);
         mRecyclerView.setAdapter(mAdapter);
         initSwipe();
+
+
+
+
+
     }
 
     public String getAssetsFolder() {
@@ -113,6 +119,8 @@ public class StudentInfoFragment extends Fragment {
         }
         return sb.toString();
     }
+
+
 
 
     private void initSwipe(){
@@ -163,5 +171,11 @@ public class StudentInfoFragment extends Fragment {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
+
+
+    @Override
+    public void alertUpdateBtn() {
+        mAdapter.notifyDataSetChanged();
     }
 }

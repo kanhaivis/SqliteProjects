@@ -128,4 +128,12 @@ public class SqlDB extends SQLiteOpenHelper {
         this.getWritableDatabase().delete("stus", "row='"+pos+"'", null);
     }
 
+    public boolean updateRow(String names, String roll) {
+        ContentValues v = new ContentValues();
+        v.put("name", names);
+        getWritableDatabase().update("stus",v,"roll='"+roll+"'",null);
+
+        return true;
+    }
+
 }
