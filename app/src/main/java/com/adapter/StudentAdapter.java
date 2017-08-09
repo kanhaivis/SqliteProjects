@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.database.SqlDB;
 import com.model.Stud;
 import com.sqliteapplication.R;
 
@@ -60,5 +61,17 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
             roll= (TextView) itemView.findViewById(R.id.roll);
             row= (TextView) itemView.findViewById(R.id.id);
         }
+    }
+
+    public void setAllList(List<Stud> list) {
+        mList.clear();
+        mList = list;
+    }
+
+    public void removeItem(int position) {
+        SqlDB.getInstanse(mContext).deleteRow(mList.get(position).getRow());
+        mList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mList.size());
     }
 }

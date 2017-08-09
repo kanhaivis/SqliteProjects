@@ -1,78 +1,81 @@
 package com.sqliteapplication;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
-import com.adapter.StudentAdapter;
-import com.database.SqlDB;
-import com.model.Stud;
+import com.fragment.SettingFragment;
+import com.fragment.StudentInfoFragment;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity {
-
-    Context mContext = this;
-
-    RecyclerView mRecyclerView;
-    StudentAdapter mAdapter;
-    List<Stud> mList;
+    Bundle mBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclearId);
-        mList = SqlDB.getInstanse(mContext).getAllStudInfo();
-        if (mList.size() == 0) {
-            String dataStr = getAssetsFolder();
-            try {
-                JSONObject obj = new JSONObject(dataStr);
-                JSONArray jsonArr = obj.getJSONArray("data");
-                for (int i = 0; i < jsonArr.length(); i++) {
-                    JSONObject o = jsonArr.getJSONObject(i);
-                    SqlDB.getInstanse(mContext).insertStus(o.getString("name"), o.getString("roll"), o.getString("age"), o.getString("row"));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-//        mList = SqlDB.getInstanse(mContext).getRangeIngo("10", "15");
-//        mList = SqlDB.getInstanse(mContext).getSameName("Amit");
-
-
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new StudentAdapter(mContext,mList);
-        mRecyclerView.setAdapter(mAdapter);
-
-
+        findViewById(R.id.setting).setOnClickListener(this);
+        mBundle = new Bundle();
+        mBundle.putInt("pos",0);
+        mBundle.putInt("SubPos",0);
+        SowStudntInfo(mBundle);
     }
 
-    public String getAssetsFolder() {
-        StringBuffer sb = new StringBuffer();
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("map.json")));
-            String temp;
-            while ((temp = br.readLine()) != null) {
-                sb.append(temp);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void SowStudntInfo(Bundle mBundle) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        StudentInfoFragment fragment = StudentInfoFragment.getStudentInfoFragment(mBundle);
+        ft.add(R.id.content, fragment, "StudentInfoFragment");
+        ft.commit();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.setting:
+                settingAlert();
+                break;
         }
-        return sb.toString();
+    }
+
+    private void settingAlert() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        SettingFragment fragment = SettingFragment.getSettingFragment();
+        ft.replace(R.id.content, fragment, "Setting");
+        ft.addToBackStack("");
+        ft.commit();
+
+        fragment.SetBtnClickCallBack(new SettingFragment.BtnClickCallBack() {
+
+            @Override
+            public void ButtonCallBack(int position, int subpos) {
+                mBundle = new Bundle();
+                mBundle.putInt("pos",position);
+                mBundle.putInt("SubPos",subpos);
+                SowStudntInfo(mBundle);
+
+            }
+
+            @Override
+            public void ButtonCallBack(int position, String name) {
+                mBundle = new Bundle();
+                mBundle.putInt("pos",position);
+                mBundle.putString("nameStr",name);
+                SowStudntInfo(mBundle);
+
+            }
+
+            @Override
+            public void ButtonCallBack(int position, String Start, String end) {
+                mBundle = new Bundle();
+                mBundle.putInt("pos",position);
+                mBundle.putString("startStr",Start);
+                mBundle.putString("endStr",end);
+                SowStudntInfo(mBundle);
+            }
+        });
     }
 }
